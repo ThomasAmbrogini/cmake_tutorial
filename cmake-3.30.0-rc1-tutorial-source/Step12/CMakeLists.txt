@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.15)
 # set the project name and version
 project(Tutorial VERSION 1.0)
 
-set(CMAKE_DEBUG_POSTFIX d)
-
 add_library(tutorial_compiler_flags INTERFACE)
 target_compile_features(tutorial_compiler_flags INTERFACE cxx_std_11)
 
@@ -39,8 +37,6 @@ add_subdirectory(MathFunctions)
 
 # add the executable
 add_executable(Tutorial tutorial.cxx)
-set_target_properties(Tutorial PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-
 target_link_libraries(Tutorial PUBLIC MathFunctions tutorial_compiler_flags)
 
 # add the binary tree to the search path for include files
@@ -89,6 +85,7 @@ include(InstallRequiredSystemLibraries)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "${Tutorial_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${Tutorial_VERSION_MINOR}")
+set(CPACK_GENERATOR "TGZ")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 include(CPack)
 
@@ -99,10 +96,10 @@ install(EXPORT MathFunctionsTargets
 )
 
 include(CMakePackageConfigHelpers)
-# generate the config file that is includes the exports
+# generate the config file that includes the exports
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/MathFunctionsConfig.cmake"
-  INSTALL_DESTINATION "lib/cmake/example"
+  INSTALL_DESTINATION "lib/cmake/MathFunctions"
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
   )
@@ -113,14 +110,15 @@ write_basic_package_version_file(
   COMPATIBILITY AnyNewerVersion
 )
 
-# install the configuration file
+# install the generated configuration files
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/MathFunctionsConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/MathFunctionsConfigVersion.cmake
   DESTINATION lib/cmake/MathFunctions
   )
 
 # generate the export targets for the build tree
-# needs to be after the install(TARGETS ) command
+# needs to be after the install(TARGETS) command
 export(EXPORT MathFunctionsTargets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/MathFunctionsTargets.cmake"
 )
